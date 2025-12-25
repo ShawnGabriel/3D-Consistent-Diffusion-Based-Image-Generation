@@ -1,0 +1,46 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+
+# ===== Notebooks =====
+.ipynb_checkpoints/
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Virtual Environments =====
+.env
+.venv
+venv/
+conda-env/
+
+# ===== ML / Diffusion =====
+*.ckpt
+*.safetensors
+*.pt
+*.pth
+*.bin
+*.onnx
+
+# ===== HuggingFace / Caches =====
+.cache/
+huggingface/
+hf_cache/
+
+# ===== Generated Outputs =====
+*.png
+*.jpg
+*.jpeg
+*.gif
+outputs/
+renders/
+results/
+
+# ===== Logs =====
+*.log
+wandb/
