@@ -1,6 +1,7 @@
 import open3d as o3d
 import numpy as np
 import matplotlib.pyplot as plt
+from save_depth import save_depth_for_controlnet
 
 def load_pointcloud():
     pcd_data = o3d.data.PLYPointCloud()
@@ -125,14 +126,13 @@ if __name__ == "__main__":
     pcd = center_pointcloud(pcd)
     
     camera_pose = look_at(
-        camera_pos=np.array([0.0, 0, 2.5]),
+        camera_pos=np.array([0.0, 0, 2.0]),
     )
     
     points = np.asarray(pcd.points)
-    print("Point cloud bounds:")
-    print("min:", points.min(axis=0))
-    print("max:", points.max(axis=0))
-    print("center:", points.mean(axis=0))
     
     depth = render_pointcloud(pcd, camera_pose)
     show_depth(depth)
+    
+    save_depth_for_controlnet(depth, "depth.png")
+    print("Saved depth.png")
