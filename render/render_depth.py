@@ -1,7 +1,7 @@
 import open3d as o3d
 import numpy as np
 import matplotlib.pyplot as plt
-from save_depth import save_depth_for_controlnet
+from render.save_depth import save_depth_for_controlnet
 
 def load_pointcloud():
     pcd_data = o3d.data.PLYPointCloud()
