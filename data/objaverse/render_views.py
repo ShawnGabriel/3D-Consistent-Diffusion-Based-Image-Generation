@@ -13,7 +13,8 @@ import open3d as o3d
 from render.render_depth import(
     render_pointcloud,
     look_at,
-    center_pointcloud
+    center_pointcloud,
+    align_pointcloud_up_axis
 )
 
 from render.save_depth import save_depth_for_controlnet
@@ -42,6 +43,7 @@ def render_object_views(pcd_path, object_name):
     
     pcd = o3d.io.read_point_cloud(pcd_path)
     pcd = center_pointcloud(pcd)
+    pcd = align_pointcloud_up_axis(pcd)
     
     out_dir = os.path.join(
         "data/objaverse/rendered",

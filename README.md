@@ -12,7 +12,15 @@ The core idea is to:
 - Condition a pretrained diffusion model on these geometric cues
 - Enforce consistency across views with lightweight methods
 
-## Current Status
-- Stable Diffusion sanity check completed
-- Open3D point cloud loading and visualization working
-- Repository structure initialized
+## Dataset Construction
+
+We construct a small synthetic multi-view dataset from publicly available 3D assets (Sketchfab).
+Each object is converted to a point cloud and rendered from multiple camera viewpoints.
+
+For each object:
+- 4 views are rendered
+- Each view includes:
+  - a depth map
+  - a known camera pose
+
+This dataset is used to evaluate multi-view consistency of geometry-conditioned diffusion models.

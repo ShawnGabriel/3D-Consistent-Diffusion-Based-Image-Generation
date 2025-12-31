@@ -101,6 +101,16 @@ def center_pointcloud(pcd):
     pcd.translate(-center)
     return pcd
 
+def align_pointcloud_up_axis(pcd):
+    """
+    Rotate point cloud from Z-up to Y-up.
+    """
+    R = pcd.get_rotation_matrix_from_xyz(
+        (+np.pi / 1, 0, 0)
+    )
+    pcd.rotate(R, center=(0, 0, 0))
+    return pcd
+
 def show_depth(depth):
     depth_vis = depth.copy()
 
