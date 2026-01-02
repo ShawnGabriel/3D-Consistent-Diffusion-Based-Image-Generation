@@ -81,6 +81,7 @@ def render_pointcloud(
     u, v, z = project_points(points_cam, intrinsics)
 
     depth = np.full((height, width), np.inf)
+    valid_mask = depth > 0
 
     valid = (
         (u >= 0) & (u < width) &
@@ -93,7 +94,7 @@ def render_pointcloud(
         if zi < depth[vi, ui]:
             depth[vi, ui] = zi
 
-    return depth
+    return depth, valid_mask
 
 def center_pointcloud(pcd):
     points = np.asarray(pcd.points)
