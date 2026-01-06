@@ -27,7 +27,7 @@ controlnet = ControlNetModel.from_pretrained(
 )
 
 pipe = StableDiffusionControlNetPipeline.from_pretrained(
-    "runwayml/stable-diffusion-v1-5"
+    "runwayml/stable-diffusion-v1-5",
     controlnet=controlnet,
     torch_dtype=DTYPE
 ).to(DEVICE)
