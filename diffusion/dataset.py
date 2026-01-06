@@ -28,7 +28,7 @@ class DepthRGBDataset(Dataset):
         self.rgb_transform = transforms.Compose([
             transforms.Resize((512, 512)),
             transforms.ToTensor(),
-            transforms.Normalize([0.5], [0.5])
+            transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
         ])
         
         self.depth_transform = transforms.Compose([
@@ -43,7 +43,7 @@ class DepthRGBDataset(Dataset):
         sample = self.samples[idx]
         
         rgb = Image.open(sample["rgb"]).convert("RGB")
-        depth = Image.open(sample["rgb"]).convert("L")
+        depth = Image.open(sample["depth"]).convert("L")
         
         rgb = self.rgb_transform(rgb)
         depth = self.depth_transform(depth)

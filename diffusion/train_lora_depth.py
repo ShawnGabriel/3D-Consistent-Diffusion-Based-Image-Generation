@@ -6,19 +6,23 @@ from diffusers import (
 )
 from peft import LoraConfig, get_peft_model
 from dataset import DepthRGBDataset
+import itertools
 
+# Used for testing by setting DRY_RUN = True
+DRY_RUN = False
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+dtype = torch.float16 if device == "cuda" else torch.float32
 
 controlnet = ControlNetModel.from_pretrained(
     "lllyasviel/sd-controlnet-depth",
-    torch_dtype=torch.float16
+    torch_dtype=dtype
 )
 
 pipe = StableDiffusionControlNetPipeline.from_pretrained(
     "runwayml/stable-diffusion-v1-5",
     controlnet=controlnet,
-    torch_dtype=torch.float16
+    torch_dtype=dtype
 ).to(device)
 
 pipe.vae.requires_grad_(False)
@@ -52,15 +56,19 @@ optimizer = torch.optim.AdamW(
     lr=1e-4
 )
 
-num_steps = 500
+num_steps = 5 if DRY_RUN else 200
 pipe.scheduler.set_timesteps(1000)
 
-for step, batch in enumerate(dataloader):
+for step, batch in enumerate(itertools.cycle(dataloader)):
     if step >= num_steps:
         break
 
-    rgb = batch["pixel_values"].to(device)
-    depth = batch["conditioning_pixel_values"].to(device)
+    rgb = batch["pixel_values"].to(device).to(dtype)
+    depth = batch["conditioning_pixel_values"].to(device).to(dtype)
+    
+    if depth.shape[1] == 1:
+        depth = depth.repeat(1, 3, 1, 1)
+        
     prompt = batch["prompt"]
 
     # Encode RGB → latent
@@ -80,22 +88,31 @@ for step, batch in enumerate(dataloader):
         latents, noise, timesteps
     )
 
-    # Text embedding
-    text_embeds = pipe._encode_prompt(
+    prompt_embeds, _ = pipe.encode_prompt(
         prompt,
-        device,
+        device=device,
         num_images_per_prompt=1,
         do_classifier_free_guidance=False
-    )
+    ) 
 
     # UNet forward
+    down_block_res_samples, mid_block_res_sample = pipe.controlnet(
+        noisy_latents,
+        timesteps,
+        encoder_hidden_states=prompt_embeds,
+        controlnet_cond=depth,
+        return_dict=False,
+    )
+
     noise_pred = pipe.unet(
         noisy_latents,
         timesteps,
-        encoder_hidden_states=text_embeds,
-        controlnet_cond=depth,
-        return_dict=False
+        encoder_hidden_states=prompt_embeds,
+        down_block_additional_residuals=down_block_res_samples,
+        mid_block_additional_residual=mid_block_res_sample,
+        return_dict=False,
     )[0]
+
 
     loss = torch.nn.functional.mse_loss(noise_pred, noise)
 
