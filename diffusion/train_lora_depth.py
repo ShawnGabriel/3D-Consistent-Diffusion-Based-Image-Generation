@@ -56,7 +56,7 @@ optimizer = torch.optim.AdamW(
     lr=1e-4
 )
 
-num_steps = 5 if DRY_RUN else 200
+num_steps = 5 if DRY_RUN else 100
 pipe.scheduler.set_timesteps(1000)
 
 for step, batch in enumerate(itertools.cycle(dataloader)):
@@ -123,4 +123,4 @@ for step, batch in enumerate(itertools.cycle(dataloader)):
     if step % 50 == 0:
         print(f"Step {step} | Loss {loss.item():.4f}")
 
-pipe.unet.save_pretrained("experiments/lora_depth")
+pipe.unet.save_attn_procs("experiments/lora_depth")

@@ -38,8 +38,6 @@ pipe.enable_attention_slicing()
 if USE_LORA:
     pipe.unet.load_attn_procs(LORA_PATH)
     print("Loaded LoRA weights")
-    
-pipe.eval()
 
 # Helper function
 def load_depth(path):
