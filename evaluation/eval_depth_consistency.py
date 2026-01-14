@@ -15,7 +15,8 @@ def load_depth_gt(path):
 
 def predict_depth(img_path):
     img = Image.open(img_path).convert("RGB")
-    inp = transform(img).unsqueeze(0)
+    img = np.array(img)
+    inp = transform(img)
     
     with torch.no_grad():
         pred = midas(inp)
